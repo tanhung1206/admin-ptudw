@@ -2,6 +2,7 @@ const express = require("express");
 const { engine } = require("express-handlebars");
 const path = require("path");
 const express_handle_sections = require("express-handlebars-sections");
+const { ppid } = require("process");
 
 const app = express();
 
@@ -55,6 +56,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/products", require("./controllers/productsController"));
+
+app.use("/api/products", require("./controllers/apiProductsController"));
 
 app.get("/buttons", (req, res) => {
     res.render("buttons");

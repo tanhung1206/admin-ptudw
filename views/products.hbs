@@ -1,50 +1,4 @@
 <div class="content-wrapper">
-    {{!-- <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <input type="text" class="form-control w-75  border-light text-white" placeholder="Search products"
-                    aria-label="Search">
-                <button type="submit" class="btn btn-outline-light ml-2">Search</button>
-            </form>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group position-relative">
-                <i class="mdi mdi-filter text-white position-absolute"
-                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
-                <select class="form-control border-light text-white pl-5" name="categoryId">
-                    <option value="0" selected>All Categories</option>
-                    {{#each categories}}
-                    <option value="{{categoryid}}">{{name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-        </div>
-
-
-        <div class="col-md-2">
-            <div class="form-group position-relative">
-                <i class="mdi mdi-filter text-white position-absolute"
-                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
-                <select class="form-control border-light text-white pl-5">
-                    <option value="" selected>All Manufacturers</option>
-                    {{#each manufacturers}}
-                    <option value="{{manufacturerid}}">{{name}}</option>
-                    {{/each}}
-                </select>
-            </div>
-        </div>
-
-        <div class="col-md-2 text-right">
-            <div class="form-group ">
-                <select class="form-control  border-light text-white">
-                    <option value="0" disabled selected>Sort by</option>
-                    <option value="1">Creation Time</option>
-                    <option value="2">Price</option>
-                    <option value="3">Total Purchase</option>
-                </select>
-            </div>
-        </div>
-    </div> --}}
     <form id="filterForm" method="GET" action="" class="row">
         <div class="col-md-6">
             <div class="form-inline">
@@ -116,7 +70,7 @@
                         <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="products">
                     {{#each products}}
                     <tr>
                         <td>{{productid}}</td>
@@ -132,11 +86,86 @@
                         </td>
                     </tr>
                     {{/each}}
+                    <tr>
+                        <td colspan="7">
+                            <nav aria-label="Page navigation example" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item {{#unless prevPage}}disabled{{/unless}}">
+                                        <a class="page-link" href="?{{#if query}}{{query}}&{{/if}}page={{prevPage}}"
+                                            tabindex="-1" aria-disabled="true">Previous</a>
+                                    </li>
+                                    {{#if (lte totalPages 7)}}
+                                    {{#for 1 totalPages}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    {{/if}}
+
+
+                                    {{#if (gte totalPages 8)}}
+                                    {{#if (lte curPage 4)}}
+                                    {{#for 1 5}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
+                                        </a></li>
+                                    {{/if}}
+
+                                    {{#if (gte curPage (subtract totalPages 3))}}
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
+                                        </a></li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    {{#for (subtract totalPages 4) totalPages}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    {{/if}}
+
+                                    {{#if (inRange curPage 5 (subtract totalPages 4))}}
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
+                                        </a></li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    {{#for (subtract curPage 1) (add curPage 1)}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
+                                        </a></li>
+                                    {{/if}}
+
+                                    {{/if}}
+                                    <li class="page-item {{#unless nextPage}}disabled{{/unless}}">
+                                        <a class="page-link"
+                                            href="?{{#if query}}{{query}}&{{/if}}page={{nextPage}}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="row mt-4">
+    {{!-- <div class="row mt-4">
         <div class="col-md-12">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
@@ -207,10 +236,7 @@
                 </ul>
             </nav>
         </div>
-    </div>
-
-
-
+    </div> --}}
 </div>
 
 {{#section "plugincss"}}
@@ -253,18 +279,13 @@
 </style>
 {{/section}}
 
+{{#section "pluginjs"}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"
+    integrity="sha512-E1dSFxg+wsfJ4HKjutk/WaCzK7S2wv1POn1RRPGh8ZK+ag9l244Vqxji3r6wgz9YBf6+vhQEYJZpSjqWFPg9gg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/assets/js/register_helper.js"></script>
+{{/section}}
+
 {{#section "customjs"}}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const filterForm = document.getElementById("filterForm");
-
-        // Submit form khi các select thay đổi
-        document.querySelectorAll("#categorySelect, #manufacturerSelect, #sortSelect").forEach((select) => {
-            select.addEventListener("change", function () {
-                filterForm.submit();
-            });
-        });
-    });
-
-</script>
+<script src="/assets/js/ajaxproducts.js"></script>
 {{/section}}

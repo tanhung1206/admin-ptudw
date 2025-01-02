@@ -1,6 +1,6 @@
 module.exports = {
     pagination: {
-        limit: 1
+        limit: 6
     },
     prices: [
         { from: 0, to: 30 },
