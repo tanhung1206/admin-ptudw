@@ -10,8 +10,35 @@ app.engine("hbs", engine({
     defaultLayout: "main",
     layoutsDir: path.join(__dirname, "/views/layouts"),
     partialsDir: path.join(__dirname, "/views/partials"),
-    helpers:{
-        section:express_handle_sections()
+    helpers: {
+        section: express_handle_sections(),
+        eq: (a, b) => a === b,                                  // Định nghĩa helper 'eq'
+        neq: (a, b) => a !== b,
+        for: function (from, to, block) {
+            let accum = '';
+            for (let i = from; i <= to; i++) {
+                accum += block.fn(i); // Render nội dung trong {{#for}}...{{/for}} với giá trị i
+            }
+            return accum;
+        },
+        gte: function (a, b) {
+            return a >= b;
+        },
+        lte: function (a, b) {
+            return a <= b;
+        },
+        gt: function (a, b) {
+            return a > b;
+        },
+        subtract: function (a, b) {
+            return a - b;
+        },
+        add: function (a, b) {
+            return a + b;
+        },
+        inRange: function (value, a, b) {
+            return value >= a && value <= b;
+        }
     }
 }));
 
@@ -26,6 +53,8 @@ app.use(express.static(path.join(__dirname, "/public")))
 app.get("/", (req, res) => {
     res.render("dashboard");
 });
+
+app.use("/products", require("./controllers/productsController"));
 
 app.get("/buttons", (req, res) => {
     res.render("buttons");

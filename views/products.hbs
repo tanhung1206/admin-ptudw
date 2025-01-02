@@ -1,0 +1,219 @@
+<div class="content-wrapper">
+    {{!-- <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <input type="text" class="form-control w-75  border-light text-white" placeholder="Search products"
+                    aria-label="Search">
+                <button type="submit" class="btn btn-outline-light ml-2">Search</button>
+            </form>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group position-relative">
+                <i class="mdi mdi-filter text-white position-absolute"
+                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <select class="form-control border-light text-white pl-5" name="categoryId">
+                    <option value="0" selected>All Categories</option>
+                    {{#each categories}}
+                    <option value="{{categoryid}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+
+
+        <div class="col-md-2">
+            <div class="form-group position-relative">
+                <i class="mdi mdi-filter text-white position-absolute"
+                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <select class="form-control border-light text-white pl-5">
+                    <option value="" selected>All Manufacturers</option>
+                    {{#each manufacturers}}
+                    <option value="{{manufacturerid}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-2 text-right">
+            <div class="form-group ">
+                <select class="form-control  border-light text-white">
+                    <option value="0" disabled selected>Sort by</option>
+                    <option value="1">Creation Time</option>
+                    <option value="2">Price</option>
+                    <option value="3">Total Purchase</option>
+                </select>
+            </div>
+        </div>
+    </div> --}}
+    <form id="filterForm" method="GET" action="" class="row">
+        <div class="col-md-6">
+            <div class="form-inline">
+                <input type="text" class="form-control w-75 border-light text-white" placeholder="Search products"
+                    name="name" value="{{name}}">
+                <button type="submit" class="btn btn-outline-light ml-2">Search</button>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group position-relative">
+                <i class="mdi mdi-filter text-white position-absolute"
+                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <select class="form-control border-light text-white pl-5" name="categoryId" id="categorySelect">
+                    <option value="" {{#unless categoryId}}selected{{/unless}}>All Categories</option>
+                    {{#each categories}}
+                    <option value="{{categoryid}}" {{#if (eq ../categoryId categoryid)}}selected{{/if}}>{{name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group position-relative">
+                <i class="mdi mdi-filter text-white position-absolute"
+                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <select class="form-control border-light text-white pl-5" name="manufacturerId" id="manufacturerSelect">
+                    <option value="" {{#unless manufacturerId}}selected{{/unless}}>All Manufacturers</option>
+                    {{#each manufacturers}}
+                    <option value="{{manufacturerid}}" {{#if (eq ../manufacturerId manufacturerid)}}selected{{/if}}>
+                        {{name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 text-right">
+            <div class="form-group">
+                <select class="form-control border-light text-white" name="sortId" id="sortSelect">
+                    <option value="" disabled {{#unless sortId}}selected{{/unless}}>Sort by</option>
+                    <option value="1" {{#if (eq sortId 1)}}selected{{/if}}>Creation Time</option>
+                    <option value="2" {{#if (eq sortId 2)}}selected{{/if}}>Price</option>
+                    <option value="3" {{#if (eq sortId 3) }}selected{{/if}}>Total Purchase</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mt-4">
+        <div class="col-md-12 text-right">
+            <button class="btn btn-success">
+                <i class="mdi mdi-plus" style="vertical-align: middle;"></i> Add New Product
+            </button>
+        </div>
+    </div>
+
+
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <table class="table table-dark table-striped table-bordered text-white">
+                <thead>
+                    <tr>
+                        <th scope="col">Product ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Sold Quantity</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each products}}
+                    <tr>
+                        <td>{{productid}}</td>
+                        <td>{{name}}</td>
+                        <td>${{price}}</td>
+                        <td>{{quantity}}</td>
+                        <td>{{sold_quantity}}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-warning">
+                                <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
+                            </button>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+
+</div>
+
+{{#section "plugincss"}}
+<style>
+    .pagination .page-item .page-link {
+        color: #fff;
+        /* Màu chữ trắng */
+        background-color: #444;
+        /* Màu nền tối */
+        border-color: #444;
+        /* Màu viền tối */
+    }
+
+    .pagination .page-item.active .page-link {
+        color: #fff;
+        /* Màu chữ trắng cho trang hiện tại */
+        background-color: #007bff;
+        /* Màu nền xanh cho trang hiện tại */
+        border-color: #007bff;
+        /* Viền xanh cho trang hiện tại */
+    }
+
+    .pagination .page-item:hover .page-link {
+        color: #000;
+        /* Màu chữ đen khi hover */
+        background-color: #f0f0f0;
+        /* Nền sáng khi hover */
+        border-color: #ccc;
+        /* Viền sáng khi hover */
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #888;
+        /* Màu chữ xám cho trạng thái disabled */
+        background-color: #444;
+        /* Nền xám cho trang disabled */
+        border-color: #444;
+        /* Viền xám cho trang disabled */
+    }
+</style>
+{{/section}}
+
+{{#section "customjs"}}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const filterForm = document.getElementById("filterForm");
+
+    // Submit form khi các select thay đổi
+    document.querySelectorAll("#categorySelect, #manufacturerSelect, #sortSelect").forEach((select) => {
+        select.addEventListener("change", function () {
+            filterForm.submit();
+        });
+    });
+});
+
+</script>
+{{/section}}
