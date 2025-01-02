@@ -112,6 +112,7 @@
                         <th scope="col">Price</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Sold Quantity</th>
+                        <th scope="col">Creation time</th>
                         <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -123,6 +124,7 @@
                         <td>${{price}}</td>
                         <td>{{quantity}}</td>
                         <td>{{sold_quantity}}</td>
+                        <td>{{createdat}}</td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-outline-warning">
                                 <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
@@ -138,20 +140,69 @@
         <div class="col-md-12">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
+                    <li class="page-item {{#unless prevPage}}disabled{{/unless}}">
+                        <a class="page-link" href="?{{#if query}}{{query}}&{{/if}}page={{prevPage}}" tabindex="-1"
+                            aria-disabled="true">Previous</a>
+                    </li>
+                    {{#if (lte totalPages 7)}}
+                    {{#for 1 totalPages}}
+                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                        </a></li>
+                    {{/for}}
+                    {{/if}}
+
+
+                    {{#if (gte totalPages 8)}}
+                    {{#if (lte curPage 4)}}
+                    {{#for 1 5}}
+                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                        </a></li>
+                    {{/for}}
                     <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        <span class="page-link">...</span>
                     </li>
-                    <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="#">1</a>
+                    <li class="page-item"><a class="page-link"
+                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
+                        </a></li>
+                    {{/if}}
+
+                    {{#if (gte curPage (subtract totalPages 3))}}
+                    <li class="page-item"><a class="page-link" href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
+                        </a></li>
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
+                    {{#for (subtract totalPages 4) totalPages}}
+                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                        </a></li>
+                    {{/for}}
+                    {{/if}}
+
+                    {{#if (inRange curPage 5 (subtract totalPages 4))}}
+                    <li class="page-item"><a class="page-link" href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
+                        </a></li>
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
+                    {{#for (subtract curPage 1) (add curPage 1)}}
+                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                        </a></li>
+                    {{/for}}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
+                    <li class="page-item"><a class="page-link"
+                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
+                        </a></li>
+                    {{/if}}
+
+                    {{/if}}
+                    <li class="page-item {{#unless nextPage}}disabled{{/unless}}">
+                        <a class="page-link" href="?{{#if query}}{{query}}&{{/if}}page={{nextPage}}">Next</a>
                     </li>
                 </ul>
             </nav>
@@ -205,15 +256,15 @@
 {{#section "customjs"}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const filterForm = document.getElementById("filterForm");
+        const filterForm = document.getElementById("filterForm");
 
-    // Submit form khi các select thay đổi
-    document.querySelectorAll("#categorySelect, #manufacturerSelect, #sortSelect").forEach((select) => {
-        select.addEventListener("change", function () {
-            filterForm.submit();
+        // Submit form khi các select thay đổi
+        document.querySelectorAll("#categorySelect, #manufacturerSelect, #sortSelect").forEach((select) => {
+            select.addEventListener("change", function () {
+                filterForm.submit();
+            });
         });
     });
-});
 
 </script>
 {{/section}}
