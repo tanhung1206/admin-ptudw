@@ -1,3 +1,5 @@
+const Handlebars = require('handlebars');
+
 Handlebars.registerHelper({
     eq: (a, b) => a === b, // So sánh bằng
     neq: (a, b) => a !== b, // So sánh không bằng
@@ -13,5 +15,12 @@ Handlebars.registerHelper({
     gt: (a, b) => a > b, // So sánh lớn hơn
     subtract: (a, b) => a - b, // Phép trừ
     add: (a, b) => a + b, // Phép cộng
-    inRange: (value, a, b) => value >= a && value <= b // Kiểm tra giá trị nằm trong khoảng
+    inRange: (value, a, b) => value >= a && value <= b, // Kiểm tra giá trị nằm trong khoảng
+    range: (start, end) => {
+        let result = [];
+        for (let i = start; i <= end; i++) {
+            result.push(i);
+        }
+        return result;
+    }
 });
