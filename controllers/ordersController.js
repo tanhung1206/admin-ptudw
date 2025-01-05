@@ -5,15 +5,14 @@ const { pagination } = require("../config/config");
 const router = express.Router();
 
 const order = {
-    1: "orderid",
-    2: "customername",
-    3: "orderdate"
+    1: "username",
+    2: "total",
+    3: "createdat"
 };
 
 router.get("/", async (req, res) => {
-    const status = req.query.status;
+    const statusId = req.query.statusId;
     const search = req.query.search;
-    const customername = req.query.customername;
     const sortId = +req.query.sortId || false;
     const curPage = +req.query.page || 1;
 
@@ -23,15 +22,11 @@ router.get("/", async (req, res) => {
     const aCondition = [];
     if (search) {
         aQuery.push(`search=${search}`);
-        aCondition.push(`customername LIKE '%${search}%' OR orderid LIKE '%${search}%'`);
+        aCondition.push(`username LIKE '%${search}%' OR orderid LIKE '%${search}%'`);
     }
-    if (customername) {
-        aQuery.push(`customername=${customername}`);
-        aCondition.push(`customername LIKE '%${customername}%'`);
-    }
-    if (status) {
-        aQuery.push(`status=${status}`);
-        aCondition.push(`status=${status}`);
+    if (statusId) {
+        aQuery.push(`statusId=${statusId}`);
+        aCondition.push(`status=${statusId}`);
     }
     if (sortId) {
         aQuery.push(`sortId=${sortId}`);
@@ -56,7 +51,7 @@ router.get("/", async (req, res) => {
     } else {
         res.render("orders", {
             orders,
-            status, customername, sortId,
+            statusId, search, sortId,
             curPage, totalPages, prevPage, nextPage,
             query
         });

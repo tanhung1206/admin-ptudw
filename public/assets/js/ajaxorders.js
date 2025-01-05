@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterForm = document.getElementById("filterForm");
 
     // Submit form when select elements change
-    document.querySelectorAll("#sortSelect").forEach((select) => {
+    document.querySelectorAll("#sortSelect, #statusSelect").forEach((select) => {
         select.addEventListener("change", function () {
             filterForm.dispatchEvent(new Event("submit"));
         });
@@ -28,9 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     return `
                         <tr>
                             <td>${order.orderid}</td>
-                            <td>${order.customername}</td>
-                            <td>${order.totalamount}</td>
-                            <td>${createdAt}</td> <!-- Add createdat column -->
+                            <td>${order.username}</td>
+                            <td>${order.total}</td>
+                            <td>${createdAt}</td>
+                            <td>${order.status}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-warning">
                                     <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     `;
                 }).join("") + `
                     <tr>
-                        <td colspan="5">
+                        <td colspan="6">
                             <nav aria-label="Page navigation example" class="mt-4">
                                 <ul class="pagination justify-content-center">
                                     <li class="page-item ${data.prevPage ? "" : "disabled"}">

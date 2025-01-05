@@ -1,5 +1,18 @@
 <div class="content-wrapper">
     <form id="filterForm" method="GET" action="" class="row">
+        <div class="col-md-2">
+            <div class="form-group position-relative">
+                <i class="mdi mdi-filter text-white position-absolute"
+                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <select class="form-control border-light text-white pl-5" name="statusId" id="statusSelect">
+                    <option value="" {{#unless statusId}}selected{{/unless}}>All status</option>
+                    <option value="0" {{#if (eq statusId 0)}}selected{{/if}}>Pending</option>
+                    <option value="1" {{#if (eq statusId 1)}}selected{{/if}}>Processing</option>
+                    <option value="2" {{#if (eq statusId 2)}}selected{{/if}}>Completed</option>
+                    <option value="3" {{#if (eq statusId 3)}}selected{{/if}}>Cancelled</option>
+                </select>
+            </div>
+        </div>
         <div class="col-md-6">
             <div class="form-inline">
                 <input type="text" class="form-control w-75 border-light text-white  d-none" placeholder="Search orders"
