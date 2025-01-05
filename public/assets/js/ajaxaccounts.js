@@ -59,20 +59,24 @@ document.addEventListener("DOMContentLoaded", function () {
                         </td>
                     </tr>
                 `;
+                addEventForPaginationLinks();
             });
     });
 
     // Ajax pagination
 
-    const paginationLinks = document.querySelectorAll('.pagination .page-link');
-
-    paginationLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            const url = this.getAttribute('href');
-            fetchPage(url);
+    const addEventForPaginationLinks = () => {
+        const paginationLinks = document.querySelectorAll('.pagination .page-link');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const url = this.getAttribute('href');
+                fetchPage(url);
+            });
         });
-    });
+    };
+
+    addEventForPaginationLinks();
 
     function fetchPage(url) {
         fetch(url)
@@ -87,16 +91,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
 
                 // Re-attach event listeners to new pagination links
-                const newPaginationLinks = document.querySelectorAll('.pagination .page-link');
-                newPaginationLinks.forEach(link => {
-                    link.addEventListener('click', function (event) {
-                        event.preventDefault();
-                        const url = this.getAttribute('href');
-                        fetchPage(url);
-                    });
-                });
+                addEventForPaginationLinks();
             })
             .catch(error => console.error('Error fetching page:', error));
     }
-
 });

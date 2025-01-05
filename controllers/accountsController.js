@@ -12,6 +12,7 @@ const order = {
 
 router.get("/", async (req, res) => {
     const isadmin = +req.query.isadmin || false;
+    const search = req.query.search;
     const username = req.query.username;
     const email = req.query.email;
     const sortId = +req.query.sortId || false;
@@ -21,9 +22,9 @@ router.get("/", async (req, res) => {
 
     const aQuery = [];
     const aCondition = [];
-    if (username) {
-        aQuery.push(`username=${username}`);
-        aCondition.push(`username LIKE '%${username}%' OR email LIKE '%${username}%'`);
+    if (search) {
+        aQuery.push(`search=${search}`);
+        aCondition.push(`username LIKE '%${search}%' OR email LIKE '%${search}%'`);
     }
     if (email) {
         aQuery.push(`email=${email}`);
