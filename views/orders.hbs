@@ -2,14 +2,14 @@
     <form id="filterForm" method="GET" action="" class="row">
         <div class="col-md-6">
             <div class="form-inline">
-                <input type="text" class="form-control w-75 border-light text-white" placeholder="Search orders"
+                <input type="text" class="form-control w-75 border-light text-white  d-none" placeholder="Search orders"
                     name="search" value="{{search}}">
-                <button type="submit" class="btn btn-outline-light ml-2">Search</button>
+                <button type="submit" class="btn btn-outline-light ml-2 d-none">Search</button>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <select class="form-control border-light text-white" name="sortId" id="sortSelect">
+                <select class="form-control border-light text-white d-none" name="sortId" id="sortSelect">
                     <option value="" disabled {{#unless sortId}}selected{{/unless}}>Sort by</option>
                     <option value="1" {{#if (eq sortId 1)}}selected{{/if}}>Username</option>
                     <option value="2" {{#if (eq sortId 2)}}selected{{/if}}>Total</option>
@@ -164,4 +164,4 @@
 
 {{#section "customjs"}}
 <script src="/assets/js/ajaxorders.js"></script>
-{{/section}}</div>
+{{/section}}
