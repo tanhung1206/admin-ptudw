@@ -1,0 +1,234 @@
+<div class="content-wrapper">
+    <form id="filterForm" method="GET" action="" class="row">
+        <div class="col-md-2">
+            <div class="form-group position-relative">
+                <i class="mdi mdi-filter text-white position-absolute"
+                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <select class="form-control border-light text-white pl-5" name="statusId" id="statusSelect">
+                    <option value="" {{#unless statusId}}selected{{/unless}}>All status</option>
+                    <option value="0" {{#if (eq statusId 0)}}selected{{/if}}>Pending</option>
+                    <option value="1" {{#if (eq statusId 1)}}selected{{/if}}>Processing</option>
+                    <option value="2" {{#if (eq statusId 2)}}selected{{/if}}>Completed</option>
+                    <option value="3" {{#if (eq statusId 3)}}selected{{/if}}>Cancelled</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-inline">
+                <input type="text" class="form-control w-75 border-light text-white  d-none" placeholder="Search orders"
+                    name="search" value="{{search}}">
+                <button type="submit" class="btn btn-outline-light ml-2 d-none">Search</button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <select class="form-control border-light text-white d-none" name="sortId" id="sortSelect">
+                    <option value="" disabled {{#unless sortId}}selected{{/unless}}>Sort by</option>
+                    <option value="1" {{#if (eq sortId 1)}}selected{{/if}}>Username</option>
+                    <option value="2" {{#if (eq sortId 2)}}selected{{/if}}>Total</option>
+                    <option value="3" {{#if (eq sortId 3)}}selected{{/if}}>Order Time</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <table class="table table-dark table-striped table-bordered text-white">
+                <thead>
+                    <tr>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Order Time</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orders">
+                    {{#each orders}}
+                    <tr>
+                        <td>{{orderid}}</td>
+                        <td>{{username}}</td>
+                        <td>{{total}}</td>
+                        <td>{{createdat}}</td>
+                        <td>{{status}}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-warning view-order" data-id="{{orderid}}">
+                                <i class="mdi mdi-eye" style="vertical-align: middle;"></i> View
+                            </button>
+                            <button class="btn btn-sm btn-outline-success update-status" data-id="{{orderid}}">
+                                <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Update Status
+                            </button>
+                        </td>
+                    </tr>
+                    {{/each}}
+                    <tr>
+                        <td colspan="6">
+                            <nav aria-label="Page navigation example" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item {{#unless prevPage}}disabled{{/unless}}">
+                                        <a class="page-link" href="?{{#if query}}{{query}}&{{/if}}page={{prevPage}}"
+                                            tabindex="-1" aria-disabled="true">Previous</a>
+                                    </li>
+                                    {{#if (lte totalPages 7)}}
+                                    {{#for 1 totalPages}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    {{/if}}
+
+                                    {{#if (gte totalPages 8)}}
+                                    {{#if (lte curPage 4)}}
+                                    {{#for 1 5}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
+                                        </a></li>
+                                    {{/if}}
+
+                                    {{#if (gte curPage (subtract totalPages 3))}}
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
+                                        </a></li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    {{#for (subtract totalPages 4) totalPages}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    {{/if}}
+
+                                    {{#if (inRange curPage 5 (subtract totalPages 4))}}
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
+                                        </a></li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    {{#for (subtract curPage 1) (add curPage 1)}}
+                                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
+                                        </a></li>
+                                    {{/for}}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    <li class="page-item"><a class="page-link"
+                                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
+                                        </a></li>
+                                    {{/if}}
+
+                                    {{/if}}
+                                    <li class="page-item {{#unless nextPage}}disabled{{/unless}}">
+                                        <a class="page-link"
+                                            href="?{{#if query}}{{query}}&{{/if}}page={{nextPage}}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for viewing order details -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1" role="dialog" aria-labelledby="viewOrderModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewOrderModalLabel">Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="orderDetails">
+                <!-- Order details will be loaded here via AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for updating order status -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateStatusForm">
+                    <input type="hidden" id="updateOrderId" name="orderid">
+                    <div class="form-group">
+                        <label for="statusSelect">Status</label>
+                        <select class="form-control" id="statusSelect" name="status">
+                            <option value="0">Pending</option>
+                            <option value="1">Processing</option>
+                            <option value="2">Completed</option>
+                            <option value="3">Cancelled</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#section "plugincss"}}
+<style>
+    .pagination .page-item .page-link {
+        color: #fff;
+        background-color: #444;
+        border-color: #444;
+    }
+
+    .pagination .page-item.active .page-link {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .pagination .page-item:hover .page-link {
+        color: #000;
+        background-color: #f0f0f0;
+        border-color: #ccc;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #888;
+        background-color: #444;
+        border-color: #444;
+    }
+</style>
+{{/section}}
+
+{{#section "pluginjs"}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"
+    integrity="sha512-E1dSFxg+wsfJ4HKjutk/WaCzK7S2wv1POn1RRPGh8ZK+ag9l244Vqxji3r6wgz9YBf6+vhQEYJZpSjqWFPg9gg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/assets/js/register_helper.js"></script>
+{{/section}}
+
+{{#section "customjs"}}
+<script src="/assets/js/ajaxorders.js"></script>
+{{/section}}
