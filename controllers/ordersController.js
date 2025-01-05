@@ -58,4 +58,41 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Route to get order details
+router.get("/:orderid", async (req, res) => {
+    // const order = await OrdersModel.findById(orderid);
+
+    // console.log(order);
+
+    // if (req.xhr) {
+    //     res.json(order);
+    // }
+
+    const orderid = req.params.orderid;
+    const _order = await OrdersModel.findById(orderid);
+    const _orderdetail = await OrdersModel.findOrderDetails(orderid);
+
+    const order = {
+        orderid: _order[0].orderid,
+        createdat: _order[0].createdat,
+        status: _order[0].status,
+        total: _order[0].total,
+        products: _orderdetail
+    };
+
+    res.json(order);
+});
+
+// Route to update order status
+router.put("/:orderid/status", async (req, res) => {
+    const orderid = req.params.orderid;
+    const { status } = req.body;
+    const result = await OrdersModel.updateStatus(orderid, status);
+    if (result) {
+        res.json({ success: true });
+    } else {
+        res.json({ success: false });
+    }
+});
+
 module.exports = router;

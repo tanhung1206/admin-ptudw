@@ -33,10 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${createdAt}</td>
                             <td>${order.status}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning">
-                                    <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
-                                </button>
-                            </td>
+                            <button class="btn btn-sm btn-outline-warning view-order" data-id="${order.orderid}">
+                                <i class="mdi mdi-eye" style="vertical-align: middle;"></i> View
+                            </button>
+                            <button class="btn btn-sm btn-outline-success update-status" data-id="${order.orderid}">
+                                <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Update Status
+                            </button>
+                        </td>
                         </tr>
                     `;
                 }).join("") + `
@@ -61,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>
                 `;
                 addEventForPaginationLinks();
+                addEventForOrderActions();
             });
     });
 
@@ -93,7 +97,85 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Re-attach event listeners to new pagination links
                 addEventForPaginationLinks();
+                addEventForOrderActions();
             })
             .catch(error => console.error('Error fetching page:', error));
     }
+
+    // Add event listeners for view and update status buttons
+    const addEventForOrderActions = () => {
+        document.querySelectorAll('.view-order').forEach(button => {
+            button.addEventListener('click', function () {
+                const orderId = this.getAttribute('data-id');
+                fetch(`/orders/${orderId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const orderDetails = `
+                            <h5>Order ID: ${data.orderid}</h5>
+                            <p>Date: ${data.createdat}</p>
+                            <p>Status: ${data.status}</p>
+                            <h5>Products:</h5>
+                            <table class="table table-bordered text-center mb-0">
+                                <thead class="bg-secondary text-dark">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="align-middle text-white">
+                                    ${data.products ? data.products.map(product => `
+                                        <tr>
+                                            <td class="align-middle">${product.name}</td>
+                                            <td class="align-middle">$${product.price}</td>
+                                            <td class="align-middle">${product.quantity}</td>
+                                            <td class="align-middle">$${product.totalprice}</td>
+                                        </tr>
+                                    `).join('') : ''}
+                                </tbody>
+                            </table>
+                            <h5 class="mt-3">Order Total: $${data.total}</h5>
+                        `;
+                        document.getElementById('orderDetails').innerHTML = orderDetails;
+                        $('#viewOrderModal').modal('show');
+                    })
+                    .catch(error => console.error('Error fetching order details:', error));
+            });
+        });
+
+        document.querySelectorAll('.update-status').forEach(button => {
+            button.addEventListener('click', function () {
+                const orderId = this.getAttribute('data-id');
+                document.getElementById('updateOrderId').value = orderId;
+                $('#updateStatusModal').modal('show');
+            });
+        });
+
+        document.getElementById('updateStatusForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(`/orders/${formData.get('orderid')}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: formData.get('status')
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $('#updateStatusModal').modal('hide');
+                        filterForm.dispatchEvent(new Event('submit')); // Refresh the orders list
+                    } else {
+                        alert('Failed to update order status');
+                    }
+                })
+                .catch(error => console.error('Error updating order status:', error));
+        });
+    };
+
+    addEventForOrderActions();
 });

@@ -54,8 +54,11 @@
                         <td>{{createdat}}</td>
                         <td>{{status}}</td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-outline-warning">
-                                <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
+                            <button class="btn btn-sm btn-outline-warning view-order" data-id="{{orderid}}">
+                                <i class="mdi mdi-eye" style="vertical-align: middle;"></i> View
+                            </button>
+                            <button class="btn btn-sm btn-outline-success update-status" data-id="{{orderid}}">
+                                <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Update Status
                             </button>
                         </td>
                     </tr>
@@ -136,6 +139,57 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for viewing order details -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1" role="dialog" aria-labelledby="viewOrderModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewOrderModalLabel">Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="orderDetails">
+                <!-- Order details will be loaded here via AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for updating order status -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateStatusForm">
+                    <input type="hidden" id="updateOrderId" name="orderid">
+                    <div class="form-group">
+                        <label for="statusSelect">Status</label>
+                        <select class="form-control" id="statusSelect" name="status">
+                            <option value="0">Pending</option>
+                            <option value="1">Processing</option>
+                            <option value="2">Completed</option>
+                            <option value="3">Cancelled</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
