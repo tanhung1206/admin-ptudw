@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     const aCondition = [];
     if (username) {
         aQuery.push(`username=${username}`);
-        aCondition.push(`username LIKE '%${username}%'`);
+        aCondition.push(`username LIKE '%${username}%' OR email LIKE '%${username}%'`);
     }
     if (email) {
         aQuery.push(`email=${email}`);
@@ -46,8 +46,6 @@ router.get("/", async (req, res) => {
     const totalPages = Math.ceil(+totalResult[0].total / pagination.limit);
     const prevPage = curPage - 1 >= 1 ? curPage - 1 : undefined;
     const nextPage = curPage + 1 <= totalPages ? curPage + 1 : undefined;
-
-    console.log("Users:", users);
 
     if (req.xhr) {
         res.json({

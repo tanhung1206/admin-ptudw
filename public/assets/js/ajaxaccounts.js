@@ -61,4 +61,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
             });
     });
+
+    // Ajax pagination
+
+    const paginationLinks = document.querySelectorAll('.pagination .page-link');
+
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            const url = this.getAttribute('href');
+            fetchPage(url);
+        });
+    });
+
+    function fetchPage(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newTableBody = doc.querySelector('#accounts');
+                const newPagination = doc.querySelector('.pagination');
+
+                document.querySelector('#accounts').innerHTML = newTableBody.innerHTML;
+                document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
+
+                // Re-attach event listeners to new pagination links
+                const newPaginationLinks = document.querySelectorAll('.pagination .page-link');
+                newPaginationLinks.forEach(link => {
+                    link.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        const url = this.getAttribute('href');
+                        fetchPage(url);
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching page:', error));
+    }
+
 });
