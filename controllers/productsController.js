@@ -9,6 +9,20 @@ const multerConfig = require('./multerConfig');
 const upload = multerConfig('public/img/products');
 const imagesModel = require("../model/imagesModel");
 
+function infoUpdateProduct(product) {
+    const fieldsAsString = ['name', 'summary', 'description', 'status', 'imagepath']
+    const data = Object.entries(product).map(([key, value]) => {
+        // Nếu cột là dạng chuỗi, bọc giá trị trong dấu nháy đơn
+        if (fieldsAsString.includes(key)) {
+            return `${key} = '${value.replace(/'/g, "''")}'`; // Escape dấu nháy đơn
+        }
+        // Cột dạng số giữ nguyên
+        return `${key} = ${value}`;
+    });
+
+    return data.join(", ");
+}
+
 router.get("/", async (req, res) => {
     const categoryId = +req.query.categoryId || false;
     const manufacturerId = +req.query.manufacturerId || false;
@@ -54,6 +68,43 @@ router.get("/", async (req, res) => {
     })
 });
 
+router.get("/add", async (req, res) => {
+    const [categories, manufacturers] = await Promise.all([
+        categoriesModel.findAll(),
+        manufacturersModel.findAll(),
+    ]);
+    res.render("add-product", {
+        categories,
+        manufacturers
+    });
+})
+
+router.post("/add", upload.fields([
+    { name: "changeMainImage", maxCount: 1 },
+    { name: "relatedImages", maxCount: 10 }
+]), async (req, res) => {
+    if (req.files.changeMainImage) {
+        const imagePath = '/img/products/' + req.files.changeMainImage[0].filename;
+        console.log('File uploaded: ', imagePath);
+        req.body.imagepath = imagePath;
+    }
+    else {
+        console.log("khong co main img");
+    }
+    const product = req.body;
+
+    const id = await productsModel.insertProduct(product);
+
+    if (req.files.relatedImages) {
+        const relatedImages = req.files.relatedImages.map(file => "/img/products/" + file.filename);
+        console.log('Related Images:', relatedImages);
+        const values = relatedImages.map(imgPath => `('${imgPath}', ${id})`).join(", ");
+        await imagesModel.insertMultiImg(values);
+    }
+
+    res.redirect("/products");
+});
+
 
 
 router.get("/:id", async (req, res) => {
@@ -73,19 +124,6 @@ router.get("/:id", async (req, res) => {
 
 })
 
-function infoUpdateProduct(product) {
-    const fieldsAsString = ['name', 'summary', 'description', 'status', 'imagepath']
-    const data = Object.entries(product).map(([key, value]) => {
-        // Nếu cột là dạng chuỗi, bọc giá trị trong dấu nháy đơn
-        if (fieldsAsString.includes(key)) {
-            return `${key} = '${value.replace(/'/g, "''")}'`; // Escape dấu nháy đơn
-        }
-        // Cột dạng số giữ nguyên
-        return `${key} = ${value}`;
-    });
-
-    return data.join(", ");
-}
 
 router.post("/:id", upload.fields([
     { name: "changeMainImage", maxCount: 1 },
@@ -123,6 +161,8 @@ router.post("/:id", upload.fields([
         const data = infoUpdateProduct(product);
         const rowCount = await productsModel.updateProduct(id, data);
         res.redirect(req.originalUrl)
-    })
+    });
+
+
 
 module.exports = router;
