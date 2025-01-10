@@ -1,0 +1,174 @@
+<div class="content-wrapper">
+    <h1>Edit Product</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Product Name</label>
+            <input type="text" class="form-control " id="name" name="name" value="{{product.name}}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Main Image</label>
+            <div class="text-center">
+                <img src="{{product.imagepath}}" alt="Product Image" class="img-fluid" id="image"
+                    style="max-width: 50%; margin-top: 10px;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="changeMainImage">Change Main Image</label>
+            <input type="file" class="form-control-file" id="changeMainImage" name="changeMainImage" />
+        </div>
+
+        {{!-- <div class="form-group">
+            <label>Related Images</label>
+            <div class="row text-center">
+                {{#each relatedImages}}
+                <div class="col-3">
+                    <img src="{{imagepath}}" alt="Related Image" class="img-fluid"
+                        style="max-width: 100%; height: auto; margin: 10px 0;" />
+                </div>
+                {{/each}}
+            </div>
+        </div> --}}
+
+        <div class="form-group">
+    <label>Related Images</label>
+    <div class="row text-center">
+        {{#each relatedImages}}
+        <div class="col-3">
+            <div class="image-container" style="position: relative;">
+                <!-- Hiển thị ảnh -->
+                <img src="{{imagepath}}" alt="Related Image" class="img-fluid"
+                    style="max-width: 100%; height: auto; margin: 10px 0;" />
+                <!-- Checkbox -->
+                <label class="custom-checkbox">
+                    <input type="checkbox" name="deletedImages" value="{{imageid}}" class="form-check-input">
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+        <div class="form-group">
+            <label for="relatedImages">Upload Related Images</label>
+            <input type="file" class="form-control-file" id="relatedImages" name="relatedImages" multiple />
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number" class="form-control" id="price" name="price" value="{{product.price}}" min="1"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" value="{{product.quantity}}" min="1"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea class="form-control" id="summary" name="summary" rows="4" required
+                minlength="30">{{product.summary}}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="6" required
+                minlength="60">{{product.description}}</textarea>
+        </div>
+        <div class="form-row justify-content-between">
+            <div class="form-group  col-md-4">
+                <label for="categorySelect">Category</label>
+                <select class="form-control border-light  pl-5" name="categoryid" id="categorySelect">
+                    {{#each categories}}
+                    <option value="{{categoryid}}" {{#if (eq ../product.categoryid categoryid)}}selected{{/if}}>{{name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="manufacturerSelect">Manufacturer</label>
+                <select class="form-control border-light  pl-5" name="manufacturerid" id="manufacturerSelect">
+                    {{#each manufacturers}}
+                    <option value="{{manufacturerid}}" {{#if (eq ../product.manufacturerid
+                        manufacturerid)}}selected{{/if}}>
+                        {{name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="manufacturerSelect">Status</label>
+                <select class="form-control border-light  pl-5" name="status" id="statusSelect">
+                    <option value="onStock" {{#if (eq product.status "onStock" )}}selected{{/if}}>On stock</option>
+                    <option value="outOfStock" {{#if (eq product.status "outOfStock" )}}selected{{/if}}>Out of stock
+                    </option>
+                    <option value="suspend" {{#if (eq product.status "suspend" )}}selected{{/if}}>Suspend</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+{{#section "plugincss"}}
+<style>
+    input,
+    select,
+    textarea {
+        color: white !important;
+    }
+
+/* Ẩn checkbox gốc */
+.custom-checkbox input {
+    display: none;
+}
+
+/* Tạo checkbox tùy chỉnh */
+.custom-checkbox .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+     transform: translate(-50%, 0);
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Khi hover trên checkbox */
+.custom-checkbox:hover .checkmark {
+    background-color: #ccc;
+}
+
+/* Khi checkbox được chọn, hiển thị dấu "X" màu đỏ */
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: red;
+}
+
+/* Tạo dấu "X" khi checkbox được chọn */
+.custom-checkbox .checkmark:after {
+    content: "❌"; /* Biểu tượng dấu X */
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-5%, 0);
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 25px;
+    font-size: 16px;
+    color: white;
+    display: none;
+}
+
+/* Hiển thị dấu "X" khi checkbox được chọn */
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+</style>
+{{/section}}

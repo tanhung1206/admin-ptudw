@@ -9,7 +9,9 @@ const templateProduct=`
     <td>{{createdat}}</td>
     <td class="text-center">
         <button class="btn btn-sm btn-outline-warning">
-            <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
+            <a href="/products/{{productid}}" style="color: inherit; text-decoration: none;">
+                <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
+            </a>
         </button>
     </td>
 </tr>

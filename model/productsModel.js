@@ -25,5 +25,19 @@ module.exports = {
             result = await db.query(`select count(*) as total from ${tableName}`)
         }
         return result.rows;
+    },
+    async findOne(id) {
+        const result = await db.query(`select * from ${tableName} where productid=${id}`);
+        return result.rows;
+    },
+
+    async updateProduct(id, data) {
+        const result = await db.query(`update ${tableName} set ${data} where productid=${id}`);
+        return result.rowCount;
+    },
+
+    async findRelatedImg(id) {
+        const result = await db.query(`select * from images where productid=${id}`);
+        return result.rows;
     }
 }
