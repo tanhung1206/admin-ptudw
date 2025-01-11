@@ -24,7 +24,7 @@ async function restrict(req, res, next) {
         next();
     }
     else {
-        res.redirect("/user/login");
+        res.redirect(`/user/login?returnURL=${req.originalUrl}`);
     }
 }
 
@@ -118,5 +118,33 @@ router.post("/profile", restrict, upload.fields([
     const rowCount = await userModel.updateUser(req.session.userid, data);
     res.redirect(req.originalUrl);
 
+})
+
+router.get("/password", restrict, (req, res) => {
+    res.render("password");
+})
+
+router.post("/password", restrict, async (req, res) => {
+    const { currentPassword, newPassword, retypeNewPassword } = req.body;
+    let errorMessage = "";
+    const passwordb = res.locals.admin.password;
+    if (!bcrypt.compareSync(currentPassword, passwordb)) {
+        errorMessage = "Password incorrect";
+    }
+    else {
+        if (newPassword != retypeNewPassword) {
+            errorMessage = "Retype password does not match";
+        }
+        else {
+            const password_hash = bcrypt.hashSync(newPassword, saltRound);
+            const rowCount = await userModel.updatePassword(req.session.userid, password_hash);
+            return res.render("password", {
+                success: true
+            })
+        }
+    }
+    return res.render("password", {
+        errorMessage,currentPassword, newPassword, retypeNewPassword
+    })
 })
 module.exports = router;

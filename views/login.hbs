@@ -41,7 +41,7 @@
                                         required
                                         pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
                                         title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character.">
-                                    <span class="toggle-password position-absolute mdi mdi-eye-off"
+                                    <span class="toggle-password position-absolute mdi mdi-eye"
                                         style="top: 50%; right: 10px;  cursor: pointer;">
                                     </span>
                                 </div>
@@ -102,12 +102,12 @@
 
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            icon.classList.remove('mdi-eye-off');
-            icon.classList.add('mdi-eye');
-        } else {
-            passwordInput.type = 'password';
             icon.classList.remove('mdi-eye');
             icon.classList.add('mdi-eye-off');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('mdi-eye-off');
+            icon.classList.add('mdi-eye');
         }
     });
 
