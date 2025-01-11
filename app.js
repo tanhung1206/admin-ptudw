@@ -3,6 +3,8 @@ const { engine } = require("express-handlebars");
 const path = require("path");
 const express_handle_sections = require("express-handlebars-sections");
 const { ppid } = require("process");
+const session = require("express-session");
+const userModel = require("./model/usersModel");
 
 const app = express();
 
@@ -51,6 +53,28 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "/public")))
 
+app.use(session({
+    secret: "default-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+        secure: false
+    }
+}));
+
+app.use("/user", require("./controllers/usersController"));
+
+app.use(async (req, res, next) => {
+    if (req.session.userid) {
+        const admin = await userModel.findAdminById(req.session.userid);
+        res.locals.admin = admin;
+        next();
+    }
+    else {
+        res.redirect(`/user/login?returnURL=${req.originalUrl}`);
+    }
+})
 app.get("/", (req, res) => {
     res.render("dashboard");
 });
@@ -106,11 +130,6 @@ app.get("/error-500", (req, res) => {
 
 })
 
-app.get("/login", (req, res) => {
-    res.render("login", {
-        layout: false
-    });
-})
 
 app.get
 app.listen(4000, () => {

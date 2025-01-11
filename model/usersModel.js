@@ -25,5 +25,14 @@ module.exports = {
             result = await db.query(`SELECT COUNT(*) as total FROM ${tableName}`);
         }
         return result.rows;
+    },
+
+    async findAdminByEmail(email) {
+        const result = await db.query(`select * from ${tableName} where email='${email}' and isadmin=true`);
+        return result.rows[0];
+    },
+    async findAdminById(id) {
+        const result = await db.query(`select * from ${tableName} where userid =${id} and isadmin=true`);
+        return result.rows[0];
     }
 };

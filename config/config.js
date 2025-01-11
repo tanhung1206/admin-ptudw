@@ -2,6 +2,7 @@ module.exports = {
     pagination: {
         limit: 6
     },
+    saltRound: 8,
     prices: [
         { from: 0, to: 30 },
         { from: 31, to: 60 },
