@@ -1,0 +1,59 @@
+{{#with admin}}
+<div class="content-wrapper">
+    <h1>Edit Profile</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">User name</label>
+            <input type="text" class="form-control" id="username" name="username" required pattern="^[a-zA-Z0-9_]{3,}$"
+                title="Username must be at least 3 characters long and can only contain letters, numbers, and underscores."
+                value="{{username}}">
+
+            <p class="text-danger mt-2" id="errorMessage">
+                {{../errorMessage}}
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label for="avatar">Avatar</label>
+            <div class="text-center">
+                <img src="{{#if avatar}}{{avatar}}{{else}}/img/default-avatar.png{{/if}}" alt="Avatar" class="img-fluid"
+                    id="avatar" style="max-width: 50%; margin-top: 10px;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="changeAvatar">Change avatar</label>
+            <input type="file" class="form-control-file" id="changeAvatar" name="changeAvatar" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <p class="form-control" id="email" name="email">{{email}}</p>
+        </div>
+        <div class="form-group">
+            <label for="firstname">First name</label>
+            <input type="text" class="form-control" id="firstname" name="firstname" required pattern="[A-Za-z\s]+"
+                title="First name should only contain letters and spaces." value="{{firstname}}">
+        </div>
+
+        <div class="form-group">
+            <label for="lastname">Last name</label>
+            <input type="text" class="form-control" id="lastname" name="lastname" required pattern="[A-Za-z\s]+"
+                title="Last name should only contain letters and spaces." value="{{lastname}}">
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{{/with}}
+
+{{#section "plugincss"}}
+<style>
+    input,
+    select,
+    textarea {
+        color: white !important;
+    }
+</style>
+{{/section}}

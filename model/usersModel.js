@@ -34,5 +34,16 @@ module.exports = {
     async findAdminById(id) {
         const result = await db.query(`select * from ${tableName} where userid =${id} and isadmin=true`);
         return result.rows[0];
+    },
+
+    async findByUserName(username) {
+        const result = await db.query(`select * from ${tableName} where username='${username}'`);
+        return result.rows[0];
+    },
+
+    async updateUser(id, data) {
+        const result = await db.query(`update ${tableName} set ${data} where userid=${id}`);
+        return result.rowCount;
     }
+
 };

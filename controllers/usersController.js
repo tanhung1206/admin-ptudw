@@ -3,10 +3,13 @@ const router = express.Router();
 const userModel = require("../model/usersModel");
 const bcrypt = require("bcryptjs");
 const { saltRound } = require("../config/config");
+const multerConfig = require("./multerConfig");
+const upload = multerConfig("public/img");
+const fs = require("fs");
+const path = require("path");
 
-function restrict(req, res, next) {
+function restrictLogin(req, res, next) {
     if (req.session.userid) {
-
         return res.redirect("/")
     }
     else {
@@ -14,20 +17,24 @@ function restrict(req, res, next) {
     }
 }
 
-router.get("/login", restrict, (req, res) => {
-    res.render("login", {
-        layout: false
-    })
-})
-
-router.get("/logout", (req, res, next) => {
+async function restrict(req, res, next) {
     if (req.session.userid) {
+        const admin = await userModel.findAdminById(req.session.userid);
+        res.locals.admin = admin;
         next();
     }
     else {
         res.redirect("/user/login");
     }
-}, (req, res) => {
+}
+
+router.get("/login", restrictLogin, (req, res) => {
+    res.render("login", {
+        layout: false
+    })
+})
+
+router.get("/logout", restrict, (req, res) => {
     req.session.destroy((err) => {
         if (!err) {
             res.redirect("/user/login");
@@ -35,7 +42,7 @@ router.get("/logout", (req, res, next) => {
     })
 })
 
-router.post("/login", restrict, async (req, res) => {
+router.post("/login", restrictLogin, async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const admin = await userModel.findAdminByEmail(email);
@@ -62,5 +69,54 @@ router.post("/login", restrict, async (req, res) => {
         layout: false,
         errorMessage
     })
+})
+
+router.get("/profile", restrict, (req, res, next) => {
+    res.render("profile");
+})
+
+function infoUpdateUser(user) {
+    const fieldsAsString = ['username', 'firstname', 'lastname', 'avatar']
+    const data = Object.entries(user).map(([key, value]) => {
+        // Nếu cột là dạng chuỗi, bọc giá trị trong dấu nháy đơn
+        if (fieldsAsString.includes(key)) {
+            return `${key} = '${value.replace(/'/g, "''")}'`; // Escape dấu nháy đơn
+        }
+        // Cột dạng số giữ nguyên
+        return `${key} = ${value}`;
+    });
+
+    return data.join(", ");
+}
+
+router.post("/profile", restrict, upload.fields([
+    { name: "changeAvatar", maxCount: 1 },
+]), async (req, res, next) => {
+    let avatar = ""
+    if (req.files.changeAvatar) {
+        avatar = '/img/' + req.files.changeAvatar[0].filename;
+        req.body.avatar = avatar;
+    }
+    const user = req.body;
+    const username = user.username;
+    const finduser = await userModel.findByUserName(username);
+    if (finduser) {
+        if (finduser.userid != req.session.userid) {
+            if (avatar != "") {
+                const deleteImg = path.join(process.cwd(), "public", avatar);
+                fs.unlink(deleteImg, (err) => {
+
+                });
+            }
+            return res.render("profile", {
+                errorMessage: "Username is exist"
+            })
+        }
+    }
+
+    const data = infoUpdateUser(user);
+    const rowCount = await userModel.updateUser(req.session.userid, data);
+    res.redirect(req.originalUrl);
+
 })
 module.exports = router;
