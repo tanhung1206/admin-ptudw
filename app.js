@@ -82,6 +82,8 @@ app.get("/", (req, res) => {
 app.use("/products", require("./controllers/productsController"));
 app.use("/accounts", require("./controllers/accountsController"));
 app.use("/orders", require("./controllers/ordersController"));
+app.use("/categories", require("./controllers/categoriesController"));
+app.use("/manufacturers", require("./controllers/manufacturersController"));
 
 app.use("/api/products", require("./controllers/apiProductsController"));
 

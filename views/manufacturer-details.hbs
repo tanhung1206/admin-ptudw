@@ -1,0 +1,36 @@
+<div class="content-wrapper">
+    <h1>Edit manufacturer</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Manufacturer Name</label>
+            <input type="text" class="form-control " id="name" name="name" value="{{manufacturer.name}}" required>
+        </div>
+
+        <p class="text-danger mt-2" id="errorMessage">
+                {{errorMessage}}
+            </p>
+
+        <div class="form-group">
+            <label for="image">Manufacturer Image</label>
+            <div class="text-center">
+                <img src="{{manufacturer.imagepath}}" alt="manufacturer Image" class="img-fluid" id="image"
+                    style="max-width: 30%; margin-top: 10px;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="changeMainImage">Change Main Image</label>
+            <input type="file" class="form-control-file" id="changeMainImage" name="changeMainImage" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+{{#section "plugincss"}}
+<style>
+    input {
+        color: white !important;
+    }
+</style>
+{{/section}}
