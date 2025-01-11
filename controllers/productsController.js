@@ -84,8 +84,8 @@ router.post("/add", upload.fields([
     { name: "relatedImages", maxCount: 10 }
 ]), async (req, res) => {
     if (req.files.changeMainImage) {
-        const imagePath = '/img/products/' + req.files.changeMainImage[0].filename;
-        console.log('File uploaded: ', imagePath);
+        const imagePath = 'http://localhost:4000/img/products/' + req.files.changeMainImage[0].filename;
+        // console.log('File uploaded: ', imagePath);
         req.body.imagepath = imagePath;
     }
     else {
@@ -96,7 +96,7 @@ router.post("/add", upload.fields([
     const id = await productsModel.insertProduct(product);
 
     if (req.files.relatedImages) {
-        const relatedImages = req.files.relatedImages.map(file => "/img/products/" + file.filename);
+        const relatedImages = req.files.relatedImages.map(file => "http://localhost:4000/img/products/" + file.filename);
         console.log('Related Images:', relatedImages);
         const values = relatedImages.map(imgPath => `('${imgPath}', ${id})`).join(", ");
         await imagesModel.insertMultiImg(values);
@@ -132,7 +132,7 @@ router.post("/:id", upload.fields([
     async (req, res) => {
         const id = req.params.id;
         if (req.files.changeMainImage) {
-            const imagePath = '/img/products/' + req.files.changeMainImage[0].filename;
+            const imagePath = 'http://localhost:4000/img/products/' + req.files.changeMainImage[0].filename;
             console.log('File uploaded: ', imagePath);
             req.body.imagepath = imagePath;
         }
@@ -140,7 +140,7 @@ router.post("/:id", upload.fields([
             console.log("khong co main img");
         }
         if (req.files.relatedImages) {
-            const relatedImages = req.files.relatedImages.map(file => "/img/products/" + file.filename);
+            const relatedImages = req.files.relatedImages.map(file => "http://localhost:4000/img/products/" + file.filename);
             console.log('Related Images:', relatedImages);
             const values = relatedImages.map(imgPath => `('${imgPath}', ${id})`).join(", ");
             await imagesModel.insertMultiImg(values);
