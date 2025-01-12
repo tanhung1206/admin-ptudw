@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${user.email}</td>
                             <td>${createdAt}</td> <!-- Thêm cột createdat -->
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning">
-                                    <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
+                                <button class="btn btn-sm btn-outline-warning view-account" data-id="${user.userid}">
+                                    <i class="mdi mdi-eye" style="vertical-align: middle;"></i> View
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger ban-unban-user" data-id="${user.userid}"
                                     data-banned="${user.isban}" data-username="${user.username}">
@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
                 addEventForPaginationLinks();
                 addEventForBanUnbanButtons(); // Re-attach event listeners for Ban/Unban buttons
+                addEventForViewAccountButtons(); // Re-attach event listeners for View Account buttons
             });
     }
 
@@ -105,7 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById('banUnbanMessage').textContent = 'You cannot ban/unban yourself.';
                     document.getElementById('banUnbanSubmit').classList.add('d-none');
                     document.getElementById('banUnbanModalLabel').textContent = 'Cannot Ban/Unban';
-                    // hide <button type="submit" class="btn btn-primary">Confirm</button>
                 } else {
                     const action = isBanned ? 'unban' : 'ban';
                     const message = isBanned ? `Are you sure you want to unban user ${username}?` : `Are you sure you want to ban user ${username}?`;
@@ -153,6 +153,35 @@ document.addEventListener("DOMContentLoaded", function () {
         // Close form
         $('#banUnbanModal').modal('hide');
     });
+
+    // View account details
+    const addEventForViewAccountButtons = () => {
+        document.querySelectorAll('.view-account').forEach(button => {
+            button.addEventListener('click', function () {
+                const userId = this.getAttribute('data-id');
+                fetch(`/accounts/${userId}`, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const accountDetails = document.getElementById("accountDetails");
+                        accountDetails.innerHTML = `
+                            <p><strong>Username:</strong> ${data.username}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Created At:</strong> ${new Date(data.createdat).toString()}</p>
+                            <p><strong>Banned:</strong> ${data.isban ? "Yes" : "No"}</p>
+                            <p><strong>Is Actived:</strong> ${data.isactivated ? "Active" : "Inactive"}</p>
+                        `;
+                        const modal = new bootstrap.Modal(document.getElementById("viewAccountModal"));
+                        modal.show();
+                    });
+            });
+        });
+    };
+
+    addEventForViewAccountButtons(); // Initial attachment of event listeners
 
     // Initial fetch to load the accounts
     fetchAccounts();

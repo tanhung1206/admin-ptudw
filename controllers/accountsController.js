@@ -83,4 +83,20 @@ router.post("/:action", async (req, res) => {
     }
 });
 
+// View account details
+router.get("/:userid", async (req, res) => {
+    const { userid } = req.params;
+    const user = await UsersModel.findById(userid);
+    if (!user) {
+        return res.status(404).send("User not found");
+    }
+
+    try {
+        res.json(user);
+    } catch (error) {
+        console.error("Error getting user details:", error);
+        res.status(500).json({ success: false, message: "An error occurred" });
+    }
+});
+
 module.exports = router;
