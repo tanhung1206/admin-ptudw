@@ -42,6 +42,11 @@
                             <button class="btn btn-sm btn-outline-warning">
                                 <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
                             </button>
+                            <button class="btn btn-sm btn-outline-danger ban-unban-user" data-id="{{userid}}"
+                                data-banned="{{banned}}">
+                                <i class="mdi mdi-account-cancel" style="vertical-align: middle;"></i> {{#if
+                                banned}}Unban{{else}}Ban{{/if}}
+                            </button>
                         </td>
                     </tr>
                     {{/each}}
@@ -121,6 +126,29 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for confirming ban/unban -->
+<div class="modal fade" id="banUnbanModal" tabindex="-1" role="dialog" aria-labelledby="banUnbanModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="banUnbanModalLabel">Confirm Action</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="banUnbanMessage"></p>
+                <form id="banUnbanForm">
+                    <input type="hidden" id="banUnbanUserId" name="userid">
+                    <input type="hidden" id="banUnbanAction" name="action">
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

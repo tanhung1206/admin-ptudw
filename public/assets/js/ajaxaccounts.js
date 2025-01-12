@@ -95,4 +95,46 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error('Error fetching page:', error));
     }
+
+    // Ban/Unban
+
+    document.querySelectorAll('.ban-unban-user').forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.getAttribute('data-id');
+            const isBanned = this.getAttribute('data-banned') === 'true';
+            const action = isBanned ? 'unban' : 'ban';
+            const message = isBanned ? 'Are you sure you want to unban this user?' : 'Are you sure you want to ban this user?';
+
+            document.getElementById('banUnbanUserId').value = userId;
+            document.getElementById('banUnbanAction').value = action;
+            document.getElementById('banUnbanMessage').textContent = message;
+
+            $('#banUnbanModal').modal('show');
+        });
+    });
+
+    document.getElementById('banUnbanForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const userId = document.getElementById('banUnbanUserId').value;
+        const action = document.getElementById('banUnbanAction').value;
+
+        // Perform AJAX request to ban/unban the user
+        // Example:
+        // $.ajax({
+        //     url: `/users/${action}`,
+        //     method: 'POST',
+        //     data: { userid: userId },
+        //     success: function(response) {
+        //         // Handle success
+        //         location.reload();
+        //     },
+        //     error: function(error) {
+        //         // Handle error
+        //         alert('An error occurred. Please try again.');
+        //     }
+        // });
+
+        // For demonstration purposes, we'll just reload the page
+        location.reload();
+    });
 });

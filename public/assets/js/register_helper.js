@@ -1,4 +1,4 @@
-const Handlebars = require('handlebars');
+// const Handlebars = require('handlebars');
 
 Handlebars.registerHelper({
     eq: (a, b) => a === b, // So sánh bằng
