@@ -5,6 +5,23 @@ const categoriesModel = require("../model/categoriesModel");
 const manufacturersModel = require("../model/manufacturersModel");
 const order = [null, "createdat", "price", "sold_quantity"];
 const { pagination } = require("../config/config");
+const multerConfig = require('./multerConfig');
+const upload = multerConfig('public/img/products');
+const imagesModel = require("../model/imagesModel");
+
+function infoUpdateProduct(product) {
+    const fieldsAsString = ['name', 'summary', 'description', 'status', 'imagepath']
+    const data = Object.entries(product).map(([key, value]) => {
+        // Nếu cột là dạng chuỗi, bọc giá trị trong dấu nháy đơn
+        if (fieldsAsString.includes(key)) {
+            return `${key} = '${value.replace(/'/g, "''")}'`; // Escape dấu nháy đơn
+        }
+        // Cột dạng số giữ nguyên
+        return `${key} = ${value}`;
+    });
+
+    return data.join(", ");
+}
 
 router.get("/", async (req, res) => {
     const categoryId = +req.query.categoryId || false;
@@ -49,6 +66,103 @@ router.get("/", async (req, res) => {
         curPage, totalPages, prevPage, nextPage,
         query
     })
+});
+
+router.get("/add", async (req, res) => {
+    const [categories, manufacturers] = await Promise.all([
+        categoriesModel.findAll(),
+        manufacturersModel.findAll(),
+    ]);
+    res.render("add-product", {
+        categories,
+        manufacturers
+    });
 })
+
+router.post("/add", upload.fields([
+    { name: "changeMainImage", maxCount: 1 },
+    { name: "relatedImages", maxCount: 10 }
+]), async (req, res) => {
+    if (req.files.changeMainImage) {
+        const imagePath = 'http://localhost:4000/img/products/' + req.files.changeMainImage[0].filename;
+        // console.log('File uploaded: ', imagePath);
+        req.body.imagepath = imagePath;
+    }
+    else {
+        console.log("khong co main img");
+    }
+    const product = req.body;
+
+    const id = await productsModel.insertProduct(product);
+
+    if (req.files.relatedImages) {
+        const relatedImages = req.files.relatedImages.map(file => "http://localhost:4000/img/products/" + file.filename);
+        console.log('Related Images:', relatedImages);
+        const values = relatedImages.map(imgPath => `('${imgPath}', ${id})`).join(", ");
+        await imagesModel.insertMultiImg(values);
+    }
+
+    res.redirect("/products");
+});
+
+
+
+router.get("/:id", async (req, res) => {
+    const id = req.params.id;
+    const [[product], categories, manufacturers, relatedImages] = await Promise.all([productsModel.findOne(id),
+    categoriesModel.findAll(),
+    manufacturersModel.findAll(),
+    productsModel.findRelatedImg(id)
+    ]);
+
+    res.render("product-details", {
+        product,
+        categories,
+        manufacturers,
+        relatedImages
+    })
+
+})
+
+
+router.post("/:id", upload.fields([
+    { name: "changeMainImage", maxCount: 1 },
+    { name: "relatedImages", maxCount: 10 }
+]),
+    async (req, res) => {
+        const id = req.params.id;
+        if (req.files.changeMainImage) {
+            const imagePath = 'http://localhost:4000/img/products/' + req.files.changeMainImage[0].filename;
+            console.log('File uploaded: ', imagePath);
+            req.body.imagepath = imagePath;
+        }
+        else {
+            console.log("khong co main img");
+        }
+        if (req.files.relatedImages) {
+            const relatedImages = req.files.relatedImages.map(file => "http://localhost:4000/img/products/" + file.filename);
+            console.log('Related Images:', relatedImages);
+            const values = relatedImages.map(imgPath => `('${imgPath}', ${id})`).join(", ");
+            await imagesModel.insertMultiImg(values);
+        }
+
+        const product = req.body;
+        const deletedImages = product.deletedImages;
+        if (deletedImages) {
+            delete product.deletedImages;
+            try {
+                deletedImages = deletedImages.join(",")
+            }
+            catch (e) {
+
+            }
+            await imagesModel.deleteMultiImg(deletedImages);
+        }
+        const data = infoUpdateProduct(product);
+        const rowCount = await productsModel.updateProduct(id, data);
+        res.redirect(req.originalUrl)
+    });
+
+
 
 module.exports = router;

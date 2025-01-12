@@ -7,40 +7,14 @@
                 <button type="submit" class="btn btn-outline-light ml-2">Search</button>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="form-group position-relative">
-                <i class="mdi mdi-filter text-white position-absolute"
-                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
-                <select class="form-control border-light text-white pl-5" name="categoryId" id="categorySelect">
-                    <option value="" {{#unless categoryId}}selected{{/unless}}>All Categories</option>
-                    {{#each categories}}
-                    <option value="{{categoryid}}" {{#if (eq ../categoryId categoryid)}}selected{{/if}}>{{name}}
-                    </option>
-                    {{/each}}
-                </select>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group position-relative">
-                <i class="mdi mdi-filter text-white position-absolute"
-                    style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
-                <select class="form-control border-light text-white pl-5" name="manufacturerId" id="manufacturerSelect">
-                    <option value="" {{#unless manufacturerId}}selected{{/unless}}>All Manufacturers</option>
-                    {{#each manufacturers}}
-                    <option value="{{manufacturerid}}" {{#if (eq ../manufacturerId manufacturerid)}}selected{{/if}}>
-                        {{name}}
-                    </option>
-                    {{/each}}
-                </select>
-            </div>
-        </div>
+
+
         <div class="col-md-2 text-right">
             <div class="form-group">
-                <select class="form-control border-light text-white" name="sortId" id="sortSelect">
+                <select class="form-control border-light text-white" name="sortId" id="sortSelect" onchange="document.getElementById('filterForm').submit();">
                     <option value="" disabled {{#unless sortId}}selected{{/unless}}>Sort by</option>
-                    <option value="1" {{#if (eq sortId 1)}}selected{{/if}}>Creation Time</option>
-                    <option value="2" {{#if (eq sortId 2)}}selected{{/if}}>Price</option>
-                    <option value="3" {{#if (eq sortId 3) }}selected{{/if}}>Total Purchase</option>
+                    <option value="1" {{#if (eq sortId 1)}}selected{{/if}}>Name</option>
+                    <option value="2" {{#if (eq sortId 2) }}selected{{/if}}>Total Products</option>
                 </select>
             </div>
         </div>
@@ -48,40 +22,32 @@
 
     <div class="row mt-4">
         <div class="col-md-12 text-right">
-            <a href="/products/add" class="btn btn-success">
-                <i class="mdi mdi-plus" style="vertical-align: middle;"></i> Add New Product
+            <a href="/categories/add" class="btn btn-success">
+                <i class="mdi mdi-plus" style="vertical-align: middle;"></i> Add New Category
             </a>
         </div>
     </div>
-
-
 
     <div class="row mt-4">
         <div class="col-12">
             <table class="table table-dark table-striped table-bordered text-white">
                 <thead>
                     <tr>
-                        <th scope="col">Product ID</th>
+                        <th scope="col">Category ID</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Sold Quantity</th>
-                        <th scope="col">Creation time</th>
+                        <th scope="col">Total products</th>
                         <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="products">
-                    {{#each products}}
+                    {{#each categories}}
                     <tr>
-                        <td>{{productid}}</td>
+                        <td>{{categoryid}}</td>
                         <td>{{name}}</td>
-                        <td>${{price}}</td>
-                        <td>{{quantity}}</td>
-                        <td>{{sold_quantity}}</td>
-                        <td>{{createdat}}</td>
+                        <td>{{count}}</td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-outline-warning">
-                                <a href="/products/{{productid}}" style="color: inherit; text-decoration: none;">
+                                <a href="/categories/{{categoryid}}" style="color: inherit; text-decoration: none;">
                                     <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
                                 </a>
                             </button>
@@ -167,78 +133,6 @@
             </table>
         </div>
     </div>
-    {{!-- <div class="row mt-4">
-        <div class="col-md-12">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item {{#unless prevPage}}disabled{{/unless}}">
-                        <a class="page-link" href="?{{#if query}}{{query}}&{{/if}}page={{prevPage}}" tabindex="-1"
-                            aria-disabled="true">Previous</a>
-                    </li>
-                    {{#if (lte totalPages 7)}}
-                    {{#for 1 totalPages}}
-                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
-                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
-                        </a></li>
-                    {{/for}}
-                    {{/if}}
-
-
-                    {{#if (gte totalPages 8)}}
-                    {{#if (lte curPage 4)}}
-                    {{#for 1 5}}
-                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
-                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
-                        </a></li>
-                    {{/for}}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                    <li class="page-item"><a class="page-link"
-                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
-                        </a></li>
-                    {{/if}}
-
-                    {{#if (gte curPage (subtract totalPages 3))}}
-                    <li class="page-item"><a class="page-link" href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
-                        </a></li>
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                    {{#for (subtract totalPages 4) totalPages}}
-                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
-                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
-                        </a></li>
-                    {{/for}}
-                    {{/if}}
-
-                    {{#if (inRange curPage 5 (subtract totalPages 4))}}
-                    <li class="page-item"><a class="page-link" href="?{{#if ../query}}{{../query}}&{{/if}}page=1">1
-                        </a></li>
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                    {{#for (subtract curPage 1) (add curPage 1)}}
-                    <li class="page-item {{#if (eq this ../curPage)}}active{{/if}}"><a class="page-link"
-                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{this}}">{{this}}
-                        </a></li>
-                    {{/for}}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                    <li class="page-item"><a class="page-link"
-                            href="?{{#if ../query}}{{../query}}&{{/if}}page={{totalPages}}">{{totalPages}}
-                        </a></li>
-                    {{/if}}
-
-                    {{/if}}
-                    <li class="page-item {{#unless nextPage}}disabled{{/unless}}">
-                        <a class="page-link" href="?{{#if query}}{{query}}&{{/if}}page={{nextPage}}">Next</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div> --}}
 </div>
 
 {{#section "plugincss"}}
@@ -281,13 +175,3 @@
 </style>
 {{/section}}
 
-{{#section "pluginjs"}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"
-    integrity="sha512-E1dSFxg+wsfJ4HKjutk/WaCzK7S2wv1POn1RRPGh8ZK+ag9l244Vqxji3r6wgz9YBf6+vhQEYJZpSjqWFPg9gg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="/assets/js/register_helper.js"></script>
-{{/section}}
-
-{{#section "customjs"}}
-<script src="/assets/js/ajaxproducts.js"></script>
-{{/section}}

@@ -25,5 +25,29 @@ module.exports = {
             result = await db.query(`SELECT COUNT(*) as total FROM ${tableName}`);
         }
         return result.rows;
+    },
+
+    async findAdminByEmail(email) {
+        const result = await db.query(`select * from ${tableName} where email='${email}' and isadmin=true`);
+        return result.rows[0];
+    },
+    async findAdminById(id) {
+        const result = await db.query(`select * from ${tableName} where userid =${id} and isadmin=true`);
+        return result.rows[0];
+    },
+
+    async findByUserName(username) {
+        const result = await db.query(`select * from ${tableName} where username='${username}'`);
+        return result.rows[0];
+    },
+
+    async updateUser(id, data) {
+        const result = await db.query(`update ${tableName} set ${data} where userid=${id}`);
+        return result.rowCount;
+    },
+    async updatePassword(id, password) {
+        const result = await db.query(`update ${tableName} set password='${password}'`);
+        return result.rowCount;
     }
+
 };

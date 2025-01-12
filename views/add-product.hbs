@@ -1,0 +1,86 @@
+<div class="content-wrapper">
+    <h1>Add Product</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Product Name</label>
+            <input type="text" class="form-control " id="name" name="name" required>
+        </div>
+
+
+        <div class="form-group">
+            <label for="changeMainImage">Main Image</label>
+            <input type="file" class="form-control-file" id="changeMainImage" name="changeMainImage" />
+        </div>
+
+
+        <div class="form-group">
+            <label for="relatedImages">Upload Related Images</label>
+            <input type="file" class="form-control-file" id="relatedImages" name="relatedImages" multiple />
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number" class="form-control" id="price" name="price" min="1"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity"  min="1"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea class="form-control" id="summary" name="summary" rows="4" required
+                minlength="30"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="6" required
+                minlength="60"></textarea>
+        </div>
+        <div class="form-row justify-content-between">
+            <div class="form-group  col-md-4">
+                <label for="categorySelect">Category</label>
+                <select class="form-control border-light  pl-5" name="categoryid" id="categorySelect">
+                    {{#each categories}}
+                    <option value="{{categoryid}}" {{#if (eq ../product.categoryid categoryid)}}selected{{/if}}>{{name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="manufacturerSelect">Manufacturer</label>
+                <select class="form-control border-light  pl-5" name="manufacturerid" id="manufacturerSelect">
+                    {{#each manufacturers}}
+                    <option value="{{manufacturerid}}" {{#if (eq ../product.manufacturerid
+                        manufacturerid)}}selected{{/if}}>
+                        {{name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="manufacturerSelect">Status</label>
+                <select class="form-control border-light  pl-5" name="status" id="statusSelect">
+                    <option value="onStock">On stock</option>
+                    <option value="outOfStock" >Out of stock
+                    </option>
+                    <option value="suspend">Suspend</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+{{#section "plugincss"}}
+<style>
+    input,
+    select,
+    textarea {
+        color: white !important;
+    }
+</style>
+{{/section}}
