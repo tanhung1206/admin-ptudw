@@ -48,6 +48,16 @@ module.exports = {
     async updatePassword(id, password) {
         const result = await db.query(`update ${tableName} set password='${password}'`);
         return result.rowCount;
-    }
+    },
 
+    async updateUserBanStatus(userid, isban) {
+        const query = `UPDATE ${tableName} SET isban = $1 WHERE userid = $2`;
+        const result = await db.query(query, [isban, userid]);
+        return result.rowCount;
+    },
+
+    async findById(id) {
+        const result = await db.query(`select * from ${tableName} where userid=${id}`);
+        return result.rows[0];
+    },
 };

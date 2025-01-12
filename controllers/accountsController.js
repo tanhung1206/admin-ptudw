@@ -64,4 +64,39 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Route to handle ban/unban requests
+router.post("/:action", async (req, res) => {
+    const { action } = req.params;
+    const { userid } = req.body;
+
+    if (!userid || !["ban", "unban"].includes(action)) {
+        return res.status(400).json({ success: false, message: "Invalid request" });
+    }
+
+    try {
+        const isban = action === "ban";
+        await UsersModel.updateUserBanStatus(userid, isban);
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error updating user ban status:", error);
+        res.status(500).json({ success: false, message: "An error occurred" });
+    }
+});
+
+// View account details
+router.get("/:userid", async (req, res) => {
+    const { userid } = req.params;
+    const user = await UsersModel.findById(userid);
+    if (!user) {
+        return res.status(404).send("User not found");
+    }
+
+    try {
+        res.json(user);
+    } catch (error) {
+        console.error("Error getting user details:", error);
+        res.status(500).json({ success: false, message: "An error occurred" });
+    }
+});
+
 module.exports = router;

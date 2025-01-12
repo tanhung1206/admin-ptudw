@@ -84,7 +84,7 @@ app.use("/accounts", require("./controllers/accountsController"));
 app.use("/orders", require("./controllers/ordersController"));
 app.use("/categories", require("./controllers/categoriesController"));
 app.use("/manufacturers", require("./controllers/manufacturersController"));
-
+app.use("/dashboard", require("./controllers/dashboardController"));
 app.use("/api/products", require("./controllers/apiProductsController"));
 
 app.get("/buttons", (req, res) => {
