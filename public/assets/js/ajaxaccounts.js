@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <button class="btn btn-sm btn-outline-warning">
                                     <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
                                 </button>
+                                <button class="btn btn-sm btn-outline-danger ban-unban-user" data-id="${user.userid}"
+                                    data-banned="${user.isban}" data-username="${user.username}">
+                                    <i class="mdi mdi-account-cancel" style="vertical-align: middle;"></i> ${user.isban ? 'Unban' : 'Ban'}
+                                </button>
                             </td>
                         </tr>
                     `;
@@ -60,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>
                 `;
                 addEventForPaginationLinks();
+                addEventForBanUnbanButtons(); // Re-attach event listeners for Ban/Unban buttons
             });
     });
 
@@ -92,49 +97,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Re-attach event listeners to new pagination links
                 addEventForPaginationLinks();
+                addEventForBanUnbanButtons(); // Re-attach event listeners for Ban/Unban buttons
             })
             .catch(error => console.error('Error fetching page:', error));
     }
 
     // Ban/Unban
 
-    document.querySelectorAll('.ban-unban-user').forEach(button => {
-        button.addEventListener('click', function () {
-            const userId = this.getAttribute('data-id');
-            const isBanned = this.getAttribute('data-banned') === 'true';
-            const action = isBanned ? 'unban' : 'ban';
-            const message = isBanned ? 'Are you sure you want to unban this user?' : 'Are you sure you want to ban this user?';
+    const addEventForBanUnbanButtons = () => {
+        const profile = document.querySelector('.navbar-profile-name').textContent;
+        document.querySelectorAll('.ban-unban-user').forEach(button => {
+            button.addEventListener('click', function () {
+                const userId = this.getAttribute('data-id');
+                const username = this.getAttribute('data-username');
+                const isBanned = this.getAttribute('data-banned') === 'true';
 
-            document.getElementById('banUnbanUserId').value = userId;
-            document.getElementById('banUnbanAction').value = action;
-            document.getElementById('banUnbanMessage').textContent = message;
+                if (profile === username) {
+                    console.log('You cannot ban/unban yourself.');
+                    document.getElementById('banUnbanMessage').textContent = 'You cannot ban/unban yourself.';
+                    document.getElementById('banUnbanSubmit').classList.add('d-none');
+                    document.getElementById('banUnbanModalLabel').textContent = 'Cannot Ban/Unban';
+                    // hide <button type="submit" class="btn btn-primary">Confirm</button>
+                } else {
+                    const action = isBanned ? 'unban' : 'ban';
+                    const message = isBanned ? `Are you sure you want to unban user ${username}?` : `Are you sure you want to ban user ${username}?`;
 
-            $('#banUnbanModal').modal('show');
+                    document.getElementById('banUnbanUserId').value = userId;
+                    document.getElementById('banUnbanAction').value = action;
+                    document.getElementById('banUnbanMessage').textContent = message;
+                }
+
+                $('#banUnbanModal').modal('show');
+            });
         });
-    });
+    };
+
+    addEventForBanUnbanButtons(); // Initial attachment of event listeners
 
     document.getElementById('banUnbanForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const userId = document.getElementById('banUnbanUserId').value;
         const action = document.getElementById('banUnbanAction').value;
 
-        // Perform AJAX request to ban/unban the user
-        // Example:
-        // $.ajax({
-        //     url: `/users/${action}`,
-        //     method: 'POST',
-        //     data: { userid: userId },
-        //     success: function(response) {
-        //         // Handle success
-        //         location.reload();
-        //     },
-        //     error: function(error) {
-        //         // Handle error
-        //         alert('An error occurred. Please try again.');
-        //     }
-        // });
+        fetch(`/accounts/${action}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ userid: userId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the table content
+                    filterForm.dispatchEvent(new Event("submit"));
+                } else {
+                    alert('An error occurred. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
 
-        // For demonstration purposes, we'll just reload the page
-        location.reload();
+        // Close form
+        $('#banUnbanModal').modal('hide');
     });
 });

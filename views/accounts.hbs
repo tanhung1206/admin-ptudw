@@ -43,9 +43,9 @@
                                 <i class="mdi mdi-pencil" style="vertical-align: middle;"></i> Edit
                             </button>
                             <button class="btn btn-sm btn-outline-danger ban-unban-user" data-id="{{userid}}"
-                                data-banned="{{banned}}">
+                                data-banned="{{isban}}" data-username="{{username}}">
                                 <i class="mdi mdi-account-cancel" style="vertical-align: middle;"></i> {{#if
-                                banned}}Unban{{else}}Ban{{/if}}
+                                isban}}Unban{{else}}Ban{{/if}}
                             </button>
                         </td>
                     </tr>
@@ -146,7 +146,7 @@
                 <form id="banUnbanForm">
                     <input type="hidden" id="banUnbanUserId" name="userid">
                     <input type="hidden" id="banUnbanAction" name="action">
-                    <button type="submit" class="btn btn-primary">Confirm</button>
+                    <button type="submit" id="banUnbanSubmit" class="btn btn-primary">Confirm</button>
                 </form>
             </div>
         </div>
