@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const filterForm = document.getElementById("filterForm");
+    let currentQueryParams = new URLSearchParams(window.location.search);
 
     // Submit form khi các select thay đổi
     document.querySelectorAll("#sortSelect").forEach((select) => {
@@ -11,11 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
     filterForm.addEventListener("submit", function (e) {
         e.preventDefault();
         const formData = new FormData(filterForm);
-        const queryParams = new URLSearchParams();
+        currentQueryParams = new URLSearchParams();
         for (const [key, value] of formData.entries()) {
-            if (value) queryParams.append(key, value); // Bỏ qua các trường trống
+            if (value) currentQueryParams.append(key, value); // Bỏ qua các trường trống
         }
-        fetch(`/accounts?${queryParams.toString()}`, {
+        fetchAccounts();
+    });
+
+    function fetchAccounts() {
+        fetch(`/accounts?${currentQueryParams.toString()}`, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
             }
@@ -48,15 +53,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             <nav aria-label="Page navigation example" class="mt-4">
                                 <ul class="pagination justify-content-center">
                                     <li class="page-item ${data.prevPage ? "" : "disabled"}">
-                                        <a class="page-link" href="?${data.query}&page=${data.prevPage}" tabindex="-1" aria-disabled="true">Previous</a>
+                                        <a class="page-link" href="#" data-page="${data.prevPage}" tabindex="-1" aria-disabled="true">Previous</a>
                                     </li>
                                     ${Array.from({ length: data.totalPages }, (_, i) => i + 1).map(page => `
                                         <li class="page-item ${page === data.curPage ? "active" : ""}">
-                                            <a class="page-link" href="?${data.query}&page=${page}">${page}</a>
+                                            <a class="page-link" href="#" data-page="${page}">${page}</a>
                                         </li>
                                     `).join("")}
                                     <li class="page-item ${data.nextPage ? "" : "disabled"}">
-                                        <a class="page-link" href="?${data.query}&page=${data.nextPage}">Next</a>
+                                        <a class="page-link" href="#" data-page="${data.nextPage}">Next</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -66,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 addEventForPaginationLinks();
                 addEventForBanUnbanButtons(); // Re-attach event listeners for Ban/Unban buttons
             });
-    });
+    }
 
     // Ajax pagination
 
@@ -75,32 +80,16 @@ document.addEventListener("DOMContentLoaded", function () {
         paginationLinks.forEach(link => {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
-                const url = this.getAttribute('href');
-                fetchPage(url);
+                const page = this.getAttribute('data-page');
+                if (page) {
+                    currentQueryParams.set('page', page);
+                    fetchAccounts();
+                }
             });
         });
     };
 
     addEventForPaginationLinks();
-
-    function fetchPage(url) {
-        fetch(url)
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newTableBody = doc.querySelector('#accounts');
-                const newPagination = doc.querySelector('.pagination');
-
-                document.querySelector('#accounts').innerHTML = newTableBody.innerHTML;
-                document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
-
-                // Re-attach event listeners to new pagination links
-                addEventForPaginationLinks();
-                addEventForBanUnbanButtons(); // Re-attach event listeners for Ban/Unban buttons
-            })
-            .catch(error => console.error('Error fetching page:', error));
-    }
 
     // Ban/Unban
 
@@ -111,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const userId = this.getAttribute('data-id');
                 const username = this.getAttribute('data-username');
                 const isBanned = this.getAttribute('data-banned') === 'true';
-
                 if (profile === username) {
                     console.log('You cannot ban/unban yourself.');
                     document.getElementById('banUnbanMessage').textContent = 'You cannot ban/unban yourself.';
@@ -125,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById('banUnbanUserId').value = userId;
                     document.getElementById('banUnbanAction').value = action;
                     document.getElementById('banUnbanMessage').textContent = message;
+                    document.getElementById('banUnbanSubmit').classList.remove('d-none');
                 }
 
                 $('#banUnbanModal').modal('show');
@@ -150,8 +139,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Reload the table content
-                    filterForm.dispatchEvent(new Event("submit"));
+                    // Reload the table content with current query parameters
+                    fetchAccounts();
                 } else {
                     alert('An error occurred. Please try again.');
                 }
@@ -164,4 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Close form
         $('#banUnbanModal').modal('hide');
     });
+
+    // Initial fetch to load the accounts
+    fetchAccounts();
 });
