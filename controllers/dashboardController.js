@@ -10,7 +10,7 @@ router.get('/revenue', async (req, res) => {
     const formattedData = {
         labels: data.map(item => {
             const date = new Date(item.date);
-            const options = { month: 'short', day: '2-digit' };
+            const options = timeRange === 'day' ? { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' } : { month: 'short', day: '2-digit' };
             return date.toLocaleDateString('en-US', options);
         }),
         values: data.map(item => item.revenue)
