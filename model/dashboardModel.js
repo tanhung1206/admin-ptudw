@@ -1,7 +1,13 @@
 const db = require("../db/db");
 
 const getRevenueData = async (timeRange) => {
-    const query = `
+    const query = timeRange === 'day' ? `
+        SELECT DATE_TRUNC('hour', createdAt) AS date, SUM(total) AS revenue 
+        FROM Orders 
+        WHERE createdAt >= NOW() - INTERVAL '1 day' 
+        GROUP BY DATE_TRUNC('hour', createdAt)
+        ORDER BY date ASC;
+    ` : `
         SELECT DATE(createdAt) AS date, SUM(total) AS revenue 
         FROM Orders 
         WHERE createdAt >= NOW() - INTERVAL '1 ${timeRange}' 
