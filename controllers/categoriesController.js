@@ -6,7 +6,7 @@ const order = [null, "name", "count desc"];
 const multerConfig = require('./multerConfig');
 const upload = multerConfig('public/img/categories');
 const path = require("path");
-const fs=require("fs");
+const fs = require("fs");
 
 function infoUpdateCategory(category) {
     const fieldsAsString = ['name', 'imagepath']
@@ -31,7 +31,8 @@ router.post("/add", upload.fields([
 ]), async (req, res) => {
     let imagePath = "";
     if (req.files.changeMainImage) {
-        imagePath = 'http://localhost:4000/img/categories/' + req.files.changeMainImage[0].filename;
+        const DOMAIN = req.protocol + '://' + req.get('host');
+        imagePath = `${DOMAIN}/img/categories/` + req.files.changeMainImage[0].filename;
         // console.log('File uploaded: ', imagePath);
         req.body.imagepath = imagePath;
     }
@@ -107,7 +108,8 @@ router.post("/:id", upload.fields([
     const id = req.params.id;
     let imagePath = "";
     if (req.files.changeMainImage) {
-        imagePath = 'http://localhost:4000/img/categories/' + req.files.changeMainImage[0].filename;
+        const DOMAIN = req.protocol + '://' + req.get('host');
+        imagePath = `${DOMAIN}/img/categories/` + req.files.changeMainImage[0].filename;
         req.body.imagepath = imagePath;
     }
     let category = req.body;
