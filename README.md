@@ -34,7 +34,7 @@ password: $2a$08$KLJovta7K4aX0FLP.ic/4e/nxRP7dKih25nhKkHgvt5KWRAU3G.WS
 
 ## IV. Đăng nhập
 
-    ```bash
-    Tài khoản: adminreal@gmail.com
-    password: Admin@1234
-    ```
+```bash
+Tài khoản: adminreal@gmail.com
+password: Admin@1234
+```
